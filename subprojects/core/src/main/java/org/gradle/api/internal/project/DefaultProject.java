@@ -634,7 +634,7 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
     @Override
     public AntBuilder getAnt() {
         if (ant == null) {
-            ant = createAntBuilder();
+            //ant = createAntBuilder();
         }
         return ant;
     }
@@ -1011,7 +1011,7 @@ public class DefaultProject extends AbstractPluginAware implements ProjectIntern
     public Map<String, ?> getProperties() {
         return DeprecationLogger.whileDisabled(new Factory<Map<String, ?>>() {
             public Map<String, ?> create() {
-                return extensibleDynamicObject.getProperties();
+                return extensibleDynamicObject.getDynamicProperties().getProperties();
             }
         });
     }

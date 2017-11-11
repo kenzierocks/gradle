@@ -32,6 +32,7 @@ import org.gradle.api.internal.artifacts.component.ComponentIdentifierFactory;
 import org.gradle.api.internal.artifacts.configurations.MutationValidator;
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.result.VersionSelectionReasons;
 import org.gradle.internal.Actions;
+import org.gradle.internal.MutableActionSet;
 import org.gradle.internal.component.local.model.DefaultProjectComponentSelector;
 import org.gradle.internal.exceptions.DiagnosticsVisitor;
 import org.gradle.internal.typeconversion.NotationConvertResult;
@@ -44,7 +45,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DefaultDependencySubstitutions implements DependencySubstitutionsInternal {
-    private final Set<Action<? super DependencySubstitution>> substitutionRules;
+    private final MutableActionSet<DependencySubstitution> substitutionRules;
     private final NotationParser<Object, ComponentSelector> moduleSelectorNotationParser;
     private final NotationParser<Object, ComponentSelector> projectSelectorNotationParser;
     private final ComponentSelectionReason reason;
@@ -76,11 +77,11 @@ public class DefaultDependencySubstitutions implements DependencySubstitutionsIn
     }
 
     private DefaultDependencySubstitutions(ComponentSelectionReason reason, NotationParser<Object, ComponentSelector> projectSelectorNotationParser, ImmutableModuleIdentifierFactory moduleIdentifierFactory) {
-        this(reason, new LinkedHashSet<Action<? super DependencySubstitution>>(), moduleSelectorNotationConverter(moduleIdentifierFactory), projectSelectorNotationParser);
+        this(reason, new MutableActionSet<DependencySubstitution>(), moduleSelectorNotationConverter(moduleIdentifierFactory), projectSelectorNotationParser);
     }
 
     private DefaultDependencySubstitutions(ComponentSelectionReason reason,
-                                           Set<Action<? super DependencySubstitution>> substitutionRules,
+                                           MutableActionSet<DependencySubstitution> substitutionRules,
                                            NotationParser<Object, ComponentSelector> moduleSelectorNotationParser,
                                            NotationParser<Object, ComponentSelector> projectSelectorNotationParser) {
         this.reason = reason;
@@ -153,7 +154,7 @@ public class DefaultDependencySubstitutions implements DependencySubstitutionsIn
     public DependencySubstitutionsInternal copy() {
         return new DefaultDependencySubstitutions(
             reason,
-            new LinkedHashSet<Action<? super DependencySubstitution>>(substitutionRules),
+            substitutionRules,
             moduleSelectorNotationParser,
             projectSelectorNotationParser);
     }
