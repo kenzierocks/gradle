@@ -159,7 +159,7 @@ class BaseDirFileResolverTest {
     @Requires(TestPrecondition.CASE_INSENSITIVE_FS)
     @Test public void testResolveAbsolutePathOnCaseInsensitiveFileSystemToUri() {
         String path = baseDir.absolutePath.toLowerCase()
-        assertEquals(baseDir, baseDirConverter.resolve(path))
+        assertEquals(new File(path), baseDirConverter.resolve(path))
     }
 
     @Test public void testResolveRelativeFileURIString() {

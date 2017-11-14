@@ -62,7 +62,7 @@ class BaseDirFileResolverSpec extends Specification {
         assert path.exists() && path.file
 
         expect:
-        normalize(path) == file
+        normalize(path) == path
     }
 
     @Requires([TestPrecondition.SYMLINKS, TestPrecondition.CASE_INSENSITIVE_FS])
@@ -74,7 +74,7 @@ class BaseDirFileResolverSpec extends Specification {
         assert path.exists() && path.file
 
         expect:
-        normalize(path) == file
+        normalize(path) == path
     }
 
     @Requires(TestPrecondition.SYMLINKS)
@@ -105,7 +105,7 @@ class BaseDirFileResolverSpec extends Specification {
         assert file.exists() && file.file
 
         expect:
-        normalize(path) == file
+        normalize(path) == path
     }
 
     @Requires(TestPrecondition.CASE_INSENSITIVE_FS)
@@ -115,7 +115,7 @@ class BaseDirFileResolverSpec extends Specification {
         def path = new File(tmpDir.testDirectory, "A/b/file.txt")
 
         expect:
-        normalize(path) == file
+        normalize(path) == path
     }
 
     def "normalizes relative path"() {
@@ -153,7 +153,7 @@ class BaseDirFileResolverSpec extends Specification {
         assert path.exists() && path.file
 
         expect:
-        normalize(path) == file
+        normalize(path) == path
     }
 
     def "normalizes file system roots"() {

@@ -21,7 +21,6 @@ import org.gradle.api.initialization.ProjectDescriptor;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.internal.DocumentationRegistry;
 import org.gradle.api.internal.project.ProjectIdentifier;
-import org.gradle.internal.FileUtils;
 import org.gradle.internal.file.PathToFileResolver;
 import org.gradle.internal.scripts.ScriptFileResolver;
 import org.gradle.util.NameValidator;
@@ -138,7 +137,7 @@ public class DefaultProjectDescriptor implements ProjectDescriptor, ProjectIdent
     }
 
     public File getBuildFile() {
-        return FileUtils.canonicalize(buildFile());
+        return fileResolver.resolve(buildFile());
     }
 
     private File buildFile() {
