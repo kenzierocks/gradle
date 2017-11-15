@@ -34,7 +34,7 @@ public class ModuleFactoryDelegateTest {
 
     private DependencyFactory dependencyFactoryStub = context.mock(DependencyFactory.class);
     private ClientModule clientModule = new DefaultClientModule("junit", "junit", "4.4");
-    
+
     private ModuleFactoryDelegate moduleFactoryDelegate = new ModuleFactoryDelegate(clientModule, dependencyFactoryStub);
 
     @Test
@@ -70,7 +70,7 @@ public class ModuleFactoryDelegateTest {
 
     private void letFactoryStubReturnDependency(final String dependencyNotation, final Dependency dependencyDummy) {
         context.checking(new Expectations() {{
-            allowing(dependencyFactoryStub).createDependency(dependencyNotation);
+            allowing(dependencyFactoryStub).createDependency(dependencyNotation, false);
             will(returnValue(dependencyDummy));
         }});
     }

@@ -23,6 +23,8 @@ import org.gradle.api.Incubating;
  */
 public interface ExternalDependency extends ModuleDependency, ModuleVersionSelector {
 
+    boolean isConstraint();
+
     /**
      * Returns whether or not the version of this dependency should be enforced in the case of version conflicts.
      */

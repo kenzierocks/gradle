@@ -53,6 +53,7 @@ public class DefaultDependencyHandler implements DependencyHandler, MethodMixIn 
     private final VariantTransformRegistry transforms;
     private final Factory<ArtifactTypeContainer> artifactTypeContainer;
     private final DynamicMethods dynamicMethods;
+    private final DependencyHandler constraintsHandler;
 
     public DefaultDependencyHandler(ConfigurationContainer configurationContainer,
                                     DependencyFactory dependencyFactory,
@@ -62,7 +63,8 @@ public class DefaultDependencyHandler implements DependencyHandler, MethodMixIn 
                                     ArtifactResolutionQueryFactory resolutionQueryFactory,
                                     AttributesSchema attributesSchema,
                                     VariantTransformRegistry transforms,
-                                    Factory<ArtifactTypeContainer> artifactTypeContainer) {
+                                    Factory<ArtifactTypeContainer> artifactTypeContainer,
+                                    DependencyHandler constraintsHandler) {
         this.configurationContainer = configurationContainer;
         this.dependencyFactory = dependencyFactory;
         this.projectFinder = projectFinder;
@@ -72,8 +74,19 @@ public class DefaultDependencyHandler implements DependencyHandler, MethodMixIn 
         this.attributesSchema = attributesSchema;
         this.transforms = transforms;
         this.artifactTypeContainer = artifactTypeContainer;
+        this.constraintsHandler = constraintsHandler;
         configureSchema();
         dynamicMethods = new DynamicMethods();
+    }
+
+    @Override
+    public DependencyHandler constraints(Action<DependencyHandler> constraintsConfiguration) {
+        constraintsConfiguration.execute(constraintsHandler);
+        return null;
+    }
+
+    private boolean isConstraintsHandler() {
+        return constraintsHandler == null;
     }
 
     @Override
@@ -93,7 +106,7 @@ public class DefaultDependencyHandler implements DependencyHandler, MethodMixIn 
 
     @Override
     public Dependency create(Object dependencyNotation, Closure configureClosure) {
-        Dependency dependency = dependencyFactory.createDependency(dependencyNotation);
+        Dependency dependency = dependencyFactory.createDependency(dependencyNotation, isConstraintsHandler());
         return ConfigureUtil.configure(configureClosure, dependency);
     }
 
@@ -129,17 +142,17 @@ public class DefaultDependencyHandler implements DependencyHandler, MethodMixIn 
 
     @Override
     public Dependency gradleApi() {
-        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.GRADLE_API);
+        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.GRADLE_API, isConstraintsHandler());
     }
 
     @Override
     public Dependency gradleTestKit() {
-        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.GRADLE_TEST_KIT);
+        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.GRADLE_TEST_KIT, isConstraintsHandler());
     }
 
     @Override
     public Dependency localGroovy() {
-        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.LOCAL_GROOVY);
+        return dependencyFactory.createDependency(DependencyFactory.ClassPathNotation.LOCAL_GROOVY, isConstraintsHandler());
     }
 
     @Override

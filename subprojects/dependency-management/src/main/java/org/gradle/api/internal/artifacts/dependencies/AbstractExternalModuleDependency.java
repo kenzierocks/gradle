@@ -26,6 +26,7 @@ import org.gradle.api.internal.artifacts.ModuleVersionSelectorStrictSpec;
 public abstract class AbstractExternalModuleDependency extends AbstractModuleDependency implements ExternalModuleDependency {
     private String group;
     private String name;
+    private boolean constraint;
     private boolean changing;
     private boolean force;
     private final MutableVersionConstraint versionConstraint;
@@ -67,6 +68,16 @@ public abstract class AbstractExternalModuleDependency extends AbstractModuleDep
 
     public String getVersion() {
         return versionConstraint.getPreferredVersion();
+    }
+
+    public boolean isConstraint() {
+        return constraint;
+    }
+
+    public ExternalModuleDependency setConstraint(boolean constraint) {
+        validateMutation(this.constraint, constraint);
+        this.constraint = constraint;
+        return this;
     }
 
     public boolean isForce() {

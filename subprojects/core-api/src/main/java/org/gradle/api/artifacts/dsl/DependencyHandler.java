@@ -249,6 +249,8 @@ import java.util.Map;
  * not available. Client modules are represented using a {@link org.gradle.api.artifacts.ClientModule}.
  */
 public interface DependencyHandler {
+    DependencyHandler constraints(Action<DependencyHandler> constraintsConfiguration);
+
     /**
      * Adds a dependency to the given configuration.
      *

@@ -20,6 +20,7 @@ import groovy.lang.Closure;
 import org.gradle.api.artifacts.ClientModule;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ProjectDependency;
+import org.gradle.api.internal.artifacts.dependencies.AbstractExternalModuleDependency;
 import org.gradle.api.internal.artifacts.dsl.dependencies.DependencyFactory;
 import org.gradle.api.internal.artifacts.dsl.dependencies.ModuleFactoryDelegate;
 import org.gradle.api.internal.artifacts.dsl.dependencies.ProjectFinder;
@@ -41,8 +42,12 @@ public class DefaultDependencyFactory implements DependencyFactory {
         this.projectDependencyFactory = projectDependencyFactory;
     }
 
-    public Dependency createDependency(Object dependencyNotation) {
-        return dependencyNotationParser.parseNotation(dependencyNotation);
+    public Dependency createDependency(Object dependencyNotation, boolean isConstraint) {
+        Dependency dependency = dependencyNotationParser.parseNotation(dependencyNotation);
+        if (isConstraint && dependency instanceof AbstractExternalModuleDependency) {
+            ((AbstractExternalModuleDependency) dependency).setConstraint(true);
+        }
+        return dependency;
     }
 
     public ClientModule createModule(Object dependencyNotation, Closure configureClosure) {

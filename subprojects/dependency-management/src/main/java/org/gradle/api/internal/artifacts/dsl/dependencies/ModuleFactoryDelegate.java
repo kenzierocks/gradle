@@ -44,14 +44,14 @@ public class ModuleFactoryDelegate {
     }
 
     public void dependency(Object dependencyNotation, Closure configureClosure) {
-        Dependency dependency = dependencyFactory.createDependency(dependencyNotation);
+        Dependency dependency = dependencyFactory.createDependency(dependencyNotation, false);
         clientModule.addDependency((ModuleDependency) dependency);
         ConfigureUtil.configure(configureClosure, dependency);
     }
 
     public void dependencies(Object[] dependencyNotations) {
         for (Object notation : dependencyNotations) {
-            clientModule.addDependency((ModuleDependency) dependencyFactory.createDependency(notation));
+            clientModule.addDependency((ModuleDependency) dependencyFactory.createDependency(notation, false));
         }
     }
 

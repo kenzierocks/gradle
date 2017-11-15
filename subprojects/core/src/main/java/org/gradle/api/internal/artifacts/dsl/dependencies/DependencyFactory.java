@@ -34,7 +34,7 @@ public interface DependencyFactory {
         }
     }
 
-    Dependency createDependency(Object dependencyNotation);
+    Dependency createDependency(Object dependencyNotation, boolean isConstraint);
     ClientModule createModule(Object dependencyNotation, Closure configureClosure);
     ProjectDependency createProjectDependencyFromMap(ProjectFinder projectFinder, Map<? extends String, ? extends Object> map);
 }

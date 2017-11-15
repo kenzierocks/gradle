@@ -199,16 +199,28 @@ public class DefaultDependencyManagementServices implements DependencyManagement
 
         DependencyHandler createDependencyHandler(Instantiator instantiator, ConfigurationContainerInternal configurationContainer, DependencyFactory dependencyFactory,
                                                   ProjectFinder projectFinder, ComponentMetadataHandler componentMetadataHandler, ComponentModuleMetadataHandler componentModuleMetadataHandler, ArtifactResolutionQueryFactory resolutionQueryFactory, AttributesSchema attributesSchema, VariantTransformRegistry artifactTransformRegistrations, ArtifactTypeRegistry artifactTypeRegistry) {
+            DependencyHandler constraintsHandler = instantiator.newInstance(DefaultDependencyHandler.class,
+                configurationContainer,
+                dependencyFactory,
+                projectFinder,
+                componentMetadataHandler,
+                componentModuleMetadataHandler,
+                resolutionQueryFactory,
+                attributesSchema,
+                artifactTransformRegistrations,
+                artifactTypeRegistry, null);
+
             return instantiator.newInstance(DefaultDependencyHandler.class,
-                    configurationContainer,
-                    dependencyFactory,
-                    projectFinder,
-                    componentMetadataHandler,
-                    componentModuleMetadataHandler,
-                    resolutionQueryFactory,
-                    attributesSchema,
-                    artifactTransformRegistrations,
-                    artifactTypeRegistry);
+                configurationContainer,
+                dependencyFactory,
+                projectFinder,
+                componentMetadataHandler,
+                componentModuleMetadataHandler,
+                resolutionQueryFactory,
+                attributesSchema,
+                artifactTransformRegistrations,
+                artifactTypeRegistry,
+                constraintsHandler);
         }
 
         DefaultComponentMetadataHandler createComponentMetadataHandler(Instantiator instantiator, ImmutableModuleIdentifierFactory moduleIdentifierFactory) {
