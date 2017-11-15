@@ -30,6 +30,8 @@ abstract class AbstractModuleDependencyResolveTest extends AbstractHttpDependenc
         GradleMetadataResolveRunner.useIvy()
     }
 
+    String getRootProjectName() { 'test' }
+
     private String getMavenRepository() {
         """
             repositories {
@@ -53,11 +55,11 @@ abstract class AbstractModuleDependencyResolveTest extends AbstractHttpDependenc
     }
 
     def getRepository() {
-        useIvy()?ivyRepository:mavenRepository
+        useIvy() ? ivyRepository : mavenRepository
     }
 
     def setup() {
-        settingsFile << "rootProject.name = 'test'"
+        settingsFile << "rootProject.name = '$rootProjectName'"
         resolve.prepare()
         server.start()
         buildFile << """
@@ -81,7 +83,7 @@ abstract class AbstractModuleDependencyResolveTest extends AbstractHttpDependenc
     void repositoryInteractions(@DelegatesTo(RemoteRepositorySpec) Closure<Void> spec) {
         spec.delegate = repoSpec
         spec()
-        repoSpec.build(useIvy()?ivyHttpRepo:mavenHttpRepo)
+        repoSpec.build(useIvy() ? ivyHttpRepo : mavenHttpRepo)
     }
 
 }
