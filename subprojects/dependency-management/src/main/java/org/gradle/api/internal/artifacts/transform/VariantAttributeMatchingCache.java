@@ -17,7 +17,6 @@
 package org.gradle.api.internal.artifacts.transform;
 
 import com.google.common.collect.Maps;
-import org.gradle.api.Transformer;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.api.internal.artifacts.VariantTransformRegistry;
 import org.gradle.api.internal.attributes.AttributeContainerInternal;
@@ -78,7 +77,7 @@ public class VariantAttributeMatchingCache {
             }
             for (final ConsumerVariantMatchResult.ConsumerVariant inputVariant : inputVariants.getMatches()) {
                 ImmutableAttributes variantAttributes = attributesFactory.concat(inputVariant.attributes.asImmutable(), candidate.getTo().asImmutable());
-                Transformer<List<File>, File> transformer = new Transformer<List<File>, File>() {
+                ArtifactTransformer transformer = new ArtifactTransformer() {
                     @Override
                     public List<File> transform(File file) {
                         List<File> result = new ArrayList<File>();
@@ -86,6 +85,18 @@ public class VariantAttributeMatchingCache {
                             result.addAll(candidate.getArtifactTransform().transform(intermediate));
                         }
                         return result;
+                    }
+
+                    @Override
+                    public boolean hasCachedResult(File input) {
+                        if (inputVariant.transformer.hasCachedResult(input)) {
+                            for (File intermediate : inputVariant.transformer.transform(input)) {
+                                if (!candidate.getArtifactTransform().hasCachedResult(intermediate)) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
                     }
 
                     @Override

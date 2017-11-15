@@ -93,24 +93,23 @@ public class DefaultTransformedFileCache implements TransformedFileCache, Stoppa
     }
 
     @Override
+    public boolean contains(File absoluteFile, HashCode inputsHash) {
+        return resultHashToResult.containsKey(getCacheKey(absoluteFile, inputsHash));
+    }
+
+    @Override
     public List<File> getResult(final File inputFile, HashCode inputsHash, final BiFunction<List<File>, File, File> transformer) {
-        // Collect up hash of the input files and of the transform's configuration params and implementation to calculate the key
-        Snapshot inputFileSnapshot = fileSystemSnapshotter.snapshotAll(inputFile);
-        DefaultBuildCacheHasher hasher = new DefaultBuildCacheHasher();
-        hasher.putHash(inputsHash);
-        inputFileSnapshot.appendToHasher(hasher);
-        final HashCode resultHash = hasher.hash();
+        final HashCode resultHash = getCacheKey(inputFile, inputsHash);
+        List<File> files = resultHashToResult.get(resultHash);
+        if (files != null) {
+            return files;
+        }
 
         // Apply locking so that only this process is writing to the file store and only a single thread is running this particular transform
         return producing.guardByKey(resultHash, new Factory<List<File>>() {
             @Override
             public List<File> create() {
-                List<File> files = resultHashToResult.get(resultHash);
-                if (files != null) {
-                    return files;
-                }
-
-                files = cache.withFileLock(new Factory<List<File>>() {
+                List<File> files = cache.withFileLock(new Factory<List<File>>() {
                     @Override
                     public List<File> create() {
                         List<File> files = indexedCache.get(resultHash);
@@ -146,6 +145,14 @@ public class DefaultTransformedFileCache implements TransformedFileCache, Stoppa
                 return files;
             }
         });
+    }
+
+    private HashCode getCacheKey(File inputFile, HashCode inputsHash) {
+        Snapshot inputFileSnapshot = fileSystemSnapshotter.snapshotAll(inputFile);
+        DefaultBuildCacheHasher hasher = new DefaultBuildCacheHasher();
+        hasher.putHash(inputsHash);
+        inputFileSnapshot.appendToHasher(hasher);
+        return hasher.hash();
     }
 
     private static class TransformAction implements Action<File> {
