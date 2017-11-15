@@ -37,7 +37,7 @@ public class SyncAction {
         modelBuilder.withArguments("-Dcom.android.build.gradle.overrideVersionCheck=true",
             "-Pandroid.injected.build.model.only=true",
             "-Pandroid.injected.invoked.from.ide=true",
-            "-Pandroid.injected.build.model.only.versioned=2");
+            "-Pandroid.injected.build.model.only.versioned=3");
         modelBuilder.setJvmArguments("-Xmx2g");
         if (modelBuilderAction != null) {
             modelBuilderAction.execute(modelBuilder);
