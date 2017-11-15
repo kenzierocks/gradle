@@ -689,4 +689,41 @@ task someTask(type: SomeTask) {
         expect:
         succeeds "foo"
     }
+
+    def "annotating private properties is deprecated"() {
+        file("buildSrc/src/main/java/SomeTask.java") << """
+            import org.gradle.api.DefaultTask;
+            import org.gradle.api.tasks.TaskAction;
+            import org.gradle.api.tasks.Input;
+            import org.gradle.api.tasks.OutputDirectory;
+            import org.gradle.api.tasks.Optional;
+            import java.io.File;
+            
+            public class SomeTask extends DefaultTask {
+                private String v;
+                @Input
+                private String getV() { return "Hello"; }
+            
+                public File d;
+                @OutputDirectory
+                public File getD() { return d; }
+                
+                @TaskAction
+                public void go() { }
+            }
+        """
+
+        buildFile << """
+            task someTask(type: SomeTask) {
+                d = file("build/out")
+            }
+        """
+
+        when:
+        executer.expectDeprecationWarning()
+        succeeds "someTask"
+
+        then:
+        output.contains "Detecting Input/Output annotations on private properties, like SomeTask.v, has been deprecated and is scheduled to be removed in Gradle 5.0. Make those getters protected or public instead."
+    }
 }

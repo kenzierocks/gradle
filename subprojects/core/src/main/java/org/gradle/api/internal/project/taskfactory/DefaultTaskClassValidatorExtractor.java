@@ -44,12 +44,14 @@ import org.gradle.api.tasks.SkipWhenEmpty;
 import org.gradle.internal.reflect.GroovyMethods;
 import org.gradle.internal.reflect.PropertyAccessorType;
 import org.gradle.internal.reflect.Types;
+import org.gradle.util.DeprecationLogger;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
@@ -185,6 +187,9 @@ public class DefaultTaskClassValidatorExtractor implements TaskClassValidatorExt
 
     private Iterable<Annotation> mergeDeclaredAnnotations(TaskPropertyActionContext propertyContext, Method method, Field field) {
         Collection<Annotation> methodAnnotations = collectRelevantAnnotations(method.getDeclaredAnnotations());
+        if (Modifier.isPrivate(method.getModifiers()) && !methodAnnotations.isEmpty()) {
+            DeprecationLogger.nagUserOfDeprecated("Detecting Input/Output annotations on private properties, like " + method.getDeclaringClass().getSimpleName() + "." + propertyContext.getName() + ",", "Make those getters protected or public instead");
+        }
         if (field == null) {
             return methodAnnotations;
         }
