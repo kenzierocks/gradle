@@ -30,6 +30,7 @@ public class OperationTimer {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
             result.setException(e);
         }
         return result;

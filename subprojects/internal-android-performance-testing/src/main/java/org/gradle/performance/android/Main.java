@@ -29,27 +29,10 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        OptionParser parser = new OptionParser();
-        ArgumentAcceptingOptionSpec<String> projectFlag = parser.accepts("project-dir", "Gradle project directory").withRequiredArg();
-        ArgumentAcceptingOptionSpec<String> gradleInstallFlag = parser.accepts("gradle-install", "Gradle installation to run the build with").withRequiredArg();
-        OptionSpecBuilder sync = parser.accepts("sync", "Simulate Gradle project synchronization");
-        OptionSpecBuilder embeddedFlag = parser.accepts("embedded", "Run build in-process");
-        OptionSet options = parser.parse(args);
-        if (!options.has(projectFlag)) {
-            System.out.println("No project directory specified.");
-            System.out.println();
-            parser.printHelpOn(System.out);
-            return;
-        }
 
-        File buildDir = new File(options.valueOf(projectFlag));
-        File gradleInstallDir = options.hasArgument(gradleInstallFlag) ? new File(options.valueOf(gradleInstallFlag)) : null;
-        boolean embedded = options.hasArgument(embeddedFlag);
-        boolean hasSimulation = options.has(sync);
-        if (options.has(sync) || hasSimulation) {
-            // defaults to 'sync', which is the only mode right now, hence the weird test above
-            fetch(buildDir, gradleInstallDir, embedded);
-        }
+        File buildDir = new File("/Users/oehme/git/k-9");
+        File gradleInstallDir = new File("/Users/oehme/.gradle/gradlet");
+        fetch(buildDir, gradleInstallDir, false);
         System.exit(0);
     }
 
